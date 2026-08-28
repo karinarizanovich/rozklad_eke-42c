@@ -354,7 +354,8 @@ const schedule = {
   sat: { label: 'Субота', lessons: [] }
 };
 
-const dayOrder = ['mon','tue','wed','thu','fri','sat'];
+const dayOrder = ['mon','tue','wed','thu','fri'];
+const dayShortLabel = { mon:'Пн', tue:'Вт', wed:'Ср', thu:'Чт', fri:'Пт' };
 const jsDayToKey = ['sun','mon','tue','wed','thu','fri','sat'];
 
 function pad(n){ return n < 10 ? '0'+n : ''+n; }
@@ -418,7 +419,7 @@ function renderDayTabs(activeKey){
   dayTabsEl.innerHTML = '';
   dayOrder.forEach(key => {
     const btn = document.createElement('button');
-    btn.textContent = schedule[key].label.slice(0,2);
+    btn.textContent = dayShortLabel[key];
     btn.title = schedule[key].label;
     if(key === activeKey) btn.classList.add('active');
     btn.addEventListener('click', () => {
@@ -455,10 +456,10 @@ function render(){
   const clearBtn = document.getElementById('clearOverride');
   if(clearBtn){ clearBtn.addEventListener('click', () => { state.weekOverride = null; render(); }); }
 
-  if(dayKey === 'sun'){
+  if(dayKey === 'sun' || dayKey === 'sat'){
     renderDayTabs(null);
-    dayHeadingEl.innerHTML = 'Неділя';
-    cardsEl.innerHTML = '<div class="empty">У неділю пар немає.</div>';
+    dayHeadingEl.innerHTML = dayKey === 'sun' ? 'Неділя' : 'Субота';
+    cardsEl.innerHTML = '<div class="empty">Це вихідний, пар немає.</div>';
     return;
   }
 
