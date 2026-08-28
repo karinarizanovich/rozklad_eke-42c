@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Розклад ЕКЕ-42с</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --bg: #F7F8FA;
+    --surface: #FFFFFF;
+    --border: #E6E9EE;
+    --text: #14171F;
+    --text-soft: #6B7280;
+    --num: #F4652B;
+    --num-soft: #FDEEE7;
+    --denom: #0F265C;
+    --denom-soft: #E9EDF5;
+    --both: #8A93A3;
+    --both-soft: #F0F1F3;
+    --radius: 14px;
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    padding: 28px 16px 60px;
+  }
+
+  .wrap{
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  header{
+    margin-bottom: 22px;
+  }
+
+  .eyebrow{
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    margin-bottom: 6px;
+  }
+
+  h1{
+    font-family: 'Space Grotesk', 'Inter', sans-serif;
+    font-size: 34px;
+    font-weight: 700;
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .subtitle{
+    color: var(--text-soft);
+    font-size: 15px;
+    margin: 0;
+  }
+
+  .accent-e{ color: var(--num); }
+
+  .controls{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin: 22px 0 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .date-block label{
+    display:block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+  }
+
+  input[type="date"]{
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 9px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  .today-btn{
+    margin-left: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    background: none;
+    border: none;
+    color: var(--denom);
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .week-toggle{
+    display:flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+
+  .seg{
+    display:flex;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 3px;
+    gap: 3px;
+  }
+
+  .seg button{
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    background: transparent;
+    padding: 8px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    color: var(--text-soft);
+    transition: background .15s ease, color .15s ease;
+  }
+
+  .seg button.active.num{ background: var(--num); color: #fff; }
+  .seg button.active.denom{ background: var(--denom); color: #fff; }
+
+  .auto-note{
+    font-size: 12px;
+    color: var(--text-soft);
+  }
+  .auto-note button{
+    border:none; background:none; color: var(--denom); font-weight:600;
+    text-decoration: underline; cursor:pointer; font-size: 12px; padding:0;
+  }
+
+  .day-tabs{
+    display:flex;
+    gap: 6px;
+    margin-bottom: 18px;
+    overflow-x: auto;
+  }
+  .day-tabs button{
+    flex: 1;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 6px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-soft);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .day-tabs button.active{
+    background: var(--text);
+    color: #fff;
+    border-color: var(--text);
+  }
+
+  .day-heading{
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 4px 0 14px;
+    display:flex;
+    align-items:center;
+    gap: 10px;
+  }
+
+  .week-pill{
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+  }
+  .week-pill.num{ background: var(--num-soft); color: var(--num); }
+  .week-pill.denom{ background: var(--denom-soft); color: var(--denom); }
+
+  .cards{
+    display:flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .card{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--both);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display:flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .card.num{ border-left-color: var(--num); }
+  .card.denom{ border-left-color: var(--denom); }
+
+  .card-time{
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    min-width: 92px;
+    color: var(--text);
+  }
+
+  .card-body{ flex: 1; }
+
+  .card-subject{
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .card-meta{
+    font-size: 13px;
+    color: var(--text-soft);
+    display:flex;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+  }
+
+  .tag{
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: var(--both-soft);
+    color: var(--both);
+  }
+  .tag.num{ background: var(--num-soft); color: var(--num); }
+  .tag.denom{ background: var(--denom-soft); color: var(--denom); }
+
+  .empty{
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 40px 20px;
+    text-align:center;
+    color: var(--text-soft);
+    font-size: 15px;
+  }
+
+  footer{
+    margin-top: 30px;
+    font-size: 12px;
+    color: var(--text-soft);
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Економічний факультет · Бізнес-економіка</div>
+    <h1>Розклад групи <span class="accent-e">ЕКЕ-42с</span></h1>
+    <p class="subtitle">I семестр 2026–2027 навчального року</p>
+  </header>
+
+  <div class="controls">
+    <div class="date-block">
+      <label for="datePick">Дата</label>
+      <input type="date" id="datePick">
+      <button class="today-btn" id="todayBtn">сьогодні</button>
+    </div>
+
+    <div class="week-toggle">
+      <div class="seg">
+        <button id="btnNum">Чисельник</button>
+        <button id="btnDenom">Знаменник</button>
+      </div>
+      <div class="auto-note" id="autoNote"></div>
+    </div>
+  </div>
+
+  <div class="day-tabs" id="dayTabs"></div>
+
+  <div class="day-heading" id="dayHeading"></div>
+
+  <div class="cards" id="cards"></div>
+
+  <footer>
+    Тиждень (чисельник/знаменник) визначається автоматично за номером тижня в календарі — якщо це не збігається з офіційним розкладом деканату, перемкніть вручну кнопкою вище. Дані розкладу — з офіційного розкладу IV курсу економічного факультету.
+  </footer>
+
+</div>
+
+<script>
+const schedule = {
+  mon: {
+    label: 'Понеділок',
+    lessons: [
+      {time:'13:30–14:50', subject:'Бізнес-фінанси', type:'лекція', room:'315', teacher:'доц. Стирський М. В.', week:'both'},
+      {time:'15:05–16:25', subject:'Банківництво і страхування', type:'семінар', room:'318', teacher:'проф. Скоморович І. Г.', week:'num'},
+      {time:'15:05–16:25', subject:'Бізнес-прогнозування', type:'лабораторна', room:'214', teacher:'доц. Буняк В. Б.', week:'denom'},
+      {time:'16:40–18:00', subject:'Аналіз бізнес-середовища', type:'семінар', room:'113', teacher:'доц. Панковець М. П.', week:'both'},
+    ]
+  },
+  tue: {
+    label: 'Вівторок',
+    lessons: [
+      {time:'13:30–14:50', subject:'Маркетинг послуг', type:'семінар', room:'305', teacher:'доц. Луців Н. В.', week:'num'},
+      {time:'13:30–14:50', subject:'Бізнес-прогнозування', type:'семінар', room:'204', teacher:'доц. Буняк В. Б.', week:'denom'},
+      {time:'15:05–16:25', subject:'Бізнес-прогнозування', type:'лекція', room:'203', teacher:'доц. Буняк В. Б.', week:'both'},
+      {time:'16:40–18:00', subject:'Бізнес-фінанси', type:'семінар', room:'113', teacher:'доц. Стирський М. В.', week:'both'},
+    ]
+  },
+  wed: {
+    label: 'Середа',
+    lessons: [
+      {time:'10:10–11:30', subject:'Аналіз бізнес-середовища', type:'лекція', room:'Ч210', teacher:'доц. Ільків Н. В.', week:'both'},
+      {time:'11:50–13:10', subject:'Корпоративне управління', type:'лекція', room:'Ч210', teacher:'доц. Іршак О. С.', week:'both'},
+    ]
+  },
+  thu: {
+    label: 'Четвер',
+    lessons: [
+      {time:'11:50–13:10', subject:'Бізнес-інновації', type:'лекція', room:'Ч210', teacher:'доц. Майовець Я. М.', week:'both'},
+      {time:'13:30–14:50', subject:'Бізнес-інновації', type:'семінар', room:'Ч209', teacher:'доц. Майовець Я. М.', week:'both'},
+      {time:'15:05–16:25', subject:'Корпоративне управління', type:'семінар', room:'Ч213', teacher:'доц. Іршак О. С.', week:'both'},
+    ]
+  },
+  fri: {
+    label: 'П\u2019ятниця',
+    lessons: [
+      {time:'13:30–14:50', subject:'Банківництво і страхування', type:'лекція', room:'Ч210', teacher:'проф. Скоморович І. Г.', week:'both'},
+      {time:'15:05–16:25', subject:'Маркетинг послуг', type:'лекція', room:'Ч210', teacher:'проф. Кузик О. В.', week:'both'},
+    ]
+  },
+  sat: { label: 'Субота', lessons: [] }
+};
+
+const dayOrder = ['mon','tue','wed','thu','fri'];
+const dayShortLabel = { mon:'Пн', tue:'Вт', wed:'Ср', thu:'Чт', fri:'Пт' };
+const jsDayToKey = ['sun','mon','tue','wed','thu','fri','sat'];
+
+function pad(n){ return n < 10 ? '0'+n : ''+n; }
+function toISO(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function fromISO(s){
+  const [y,m,d] = s.split('-').map(Number);
+  return new Date(y, m-1, d);
+}
+
+function getISOWeek(date){
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+}
+
+function autoWeekType(date){
+  return (getISOWeek(date) % 2 === 1) ? 'num' : 'denom';
+}
+
+let state = {
+  date: new Date(),
+  weekOverride: null // 'num' | 'denom' | null (auto)
+};
+
+const datePick = document.getElementById('datePick');
+const todayBtn = document.getElementById('todayBtn');
+const btnNum = document.getElementById('btnNum');
+const btnDenom = document.getElementById('btnDenom');
+const autoNote = document.getElementById('autoNote');
+const dayTabsEl = document.getElementById('dayTabs');
+const dayHeadingEl = document.getElementById('dayHeading');
+const cardsEl = document.getElementById('cards');
+
+datePick.value = toISO(state.date);
+
+datePick.addEventListener('change', () => {
+  if(datePick.value){
+    state.date = fromISO(datePick.value);
+    state.weekOverride = null;
+    render();
+  }
+});
+
+todayBtn.addEventListener('click', () => {
+  state.date = new Date();
+  state.weekOverride = null;
+  datePick.value = toISO(state.date);
+  render();
+});
+
+btnNum.addEventListener('click', () => { state.weekOverride = 'num'; render(); });
+btnDenom.addEventListener('click', () => { state.weekOverride = 'denom'; render(); });
+
+function selectedDayKey(){
+  return jsDayToKey[state.date.getDay()];
+}
+
+function renderDayTabs(activeKey){
+  dayTabsEl.innerHTML = '';
+  dayOrder.forEach(key => {
+    const btn = document.createElement('button');
+    btn.textContent = dayShortLabel[key];
+    btn.title = schedule[key].label;
+    if(key === activeKey) btn.classList.add('active');
+    btn.addEventListener('click', () => {
+      // move the picked date to the nearest date matching this weekday, same week
+      const jsIndex = dayOrder.indexOf(key) + 1; // mon=1..sat=6
+      const current = state.date.getDay() || 7;
+      const diff = jsIndex - current;
+      const newDate = new Date(state.date);
+      newDate.setDate(newDate.getDate() + diff);
+      state.date = newDate;
+      state.weekOverride = null;
+      datePick.value = toISO(state.date);
+      render();
+    });
+    dayTabsEl.appendChild(btn);
+  });
+}
+
+function render(){
+  const dayKey = selectedDayKey();
+  const auto = autoWeekType(state.date);
+  const effective = state.weekOverride || auto;
+
+  // toggle buttons
+  btnNum.classList.toggle('active', effective === 'num');
+  btnNum.classList.toggle('num', true);
+  btnDenom.classList.toggle('active', effective === 'denom');
+  btnDenom.classList.toggle('denom', true);
+
+  autoNote.innerHTML = state.weekOverride
+    ? 'вибрано вручну · <button id="clearOverride">повернути авто</button>'
+    : 'визначено автоматично за датою';
+
+  const clearBtn = document.getElementById('clearOverride');
+  if(clearBtn){ clearBtn.addEventListener('click', () => { state.weekOverride = null; render(); }); }
+
+  if(dayKey === 'sun' || dayKey === 'sat'){
+    renderDayTabs(null);
+    dayHeadingEl.innerHTML = dayKey === 'sun' ? 'Неділя' : 'Субота';
+    cardsEl.innerHTML = '<div class="empty">Це вихідний, пар немає.</div>';
+    return;
+  }
+
+  renderDayTabs(dayKey);
+
+  const day = schedule[dayKey];
+  const pill = effective === 'num'
+    ? '<span class="week-pill num">Чисельник</span>'
+    : '<span class="week-pill denom">Знаменник</span>';
+  dayHeadingEl.innerHTML = day.label + ' ' + pill;
+
+  const lessons = day.lessons.filter(l => l.week === 'both' || l.week === effective);
+
+  if(lessons.length === 0){
+    cardsEl.innerHTML = '<div class="empty">У цей день пар немає.</div>';
+    return;
+  }
+
+  cardsEl.innerHTML = '';
+  lessons.forEach(l => {
+    const card = document.createElement('div');
+    card.className = 'card ' + (l.week !== 'both' ? l.week : '');
+    const tagClass = l.week !== 'both' ? l.week : '';
+    const tagText = l.week === 'num' ? 'чисельник' : (l.week === 'denom' ? 'знаменник' : 'щотижня');
+    card.innerHTML = `
+      <div class="card-time">${l.time}</div>
+      <div class="card-body">
+        <div class="card-subject">${l.subject}</div>
+        <div class="card-meta">
+          <span class="tag ${tagClass}">${tagText}</span>
+          <span>${l.type}</span>
+          <span>ауд. ${l.room}</span>
+          <span>${l.teacher}</span>
+        </div>
+      </div>
+    `;
+    cardsEl.appendChild(card);
+  });
+}
+
+render();
+</script>
+</body>
+</html>
