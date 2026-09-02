@@ -374,7 +374,7 @@ function getISOWeek(date){
 }
 
 function autoWeekType(date){
-  return (getISOWeek(date) % 2 === 1) ? 'num' : 'denom';
+  return (getISOWeek(date) % 2 === 0) ? 'num' : 'denom';
 }
 
 let state = {
